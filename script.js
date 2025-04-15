@@ -17,59 +17,56 @@ nextPieceCanvas.height = 4 * BLOCK_SIZE;
 
 // テトリミノの形状定義
 const ANIMAL_SHAPES = [
-    // 猫
+    // I型（縦長）
+    [
+        [1],
+        [1],
+        [1],
+        [1]
+    ],
+    // O型（正方形）
+    [
+        [1, 1],
+        [1, 1]
+    ],
+    // T型
     [
         [0, 1, 0],
-        [1, 1, 1],
-        [1, 0, 1]
-    ],
-    // 犬
-    [
-        [1, 1, 0],
-        [1, 1, 1],
-        [1, 0, 0]
-    ],
-    // うさぎ
-    [
-        [1, 1, 1],
-        [0, 1, 0],
-        [1, 0, 1]
-    ],
-    // パンダ
-    [
-        [1, 1, 1],
-        [1, 0, 1],
         [1, 1, 1]
     ],
-    // ペンギン
+    // L型
     [
-        [1, 1, 1],
-        [1, 1, 1],
-        [0, 1, 0]
+        [1, 0],
+        [1, 0],
+        [1, 1]
     ],
-    // ゾウ
+    // J型
     [
-        [1, 1, 1],
-        [1, 0, 1],
-        [0, 1, 0]
+        [0, 1],
+        [0, 1],
+        [1, 1]
     ],
-    // キリン
+    // S型
     [
-        [1, 0, 0],
-        [1, 1, 1],
-        [1, 0, 1]
+        [0, 1, 1],
+        [1, 1, 0]
+    ],
+    // Z型
+    [
+        [1, 1, 0],
+        [0, 1, 1]
     ]
 ];
 
 // 動物の色定義
 const ANIMAL_COLORS = [
-    '#FFB6C1', // 猫 - ピンク
-    '#D2B48C', // 犬 - 茶色
-    '#FFFFFF', // うさぎ - 白
-    '#000000', // パンダ - 黒
-    '#000000', // ペンギン - 黒
-    '#808080', // ゾウ - グレー
-    '#FFD700'  // キリン - ゴールド
+    '#00FFFF', // I型 - シアン
+    '#FFFF00', // O型 - イエロー
+    '#800080', // T型 - パープル
+    '#FFA500', // L型 - オレンジ
+    '#0000FF', // J型 - ブルー
+    '#00FF00', // S型 - グリーン
+    '#FF0000'  // Z型 - レッド
 ];
 
 // サウンドエフェクト
@@ -145,6 +142,56 @@ class Tetromino {
                         BLOCK_SIZE - 1
                     );
 
+                    // 動物の特徴を描画
+                    const animalIndex = ANIMAL_SHAPES.findIndex(shape => 
+                        JSON.stringify(shape) === JSON.stringify(this.shape)
+                    );
+
+                    // 目を描画
+                    ctx.fillStyle = 'white';
+                    ctx.beginPath();
+                    ctx.arc(blockX + BLOCK_SIZE/3, blockY + BLOCK_SIZE/3, 3, 0, Math.PI * 2);
+                    ctx.arc(blockX + BLOCK_SIZE*2/3, blockY + BLOCK_SIZE/3, 3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 瞳を描画
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc(blockX + BLOCK_SIZE/3, blockY + BLOCK_SIZE/3, 1.5, 0, Math.PI * 2);
+                    ctx.arc(blockX + BLOCK_SIZE*2/3, blockY + BLOCK_SIZE/3, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 鼻と口を描画
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc(blockX + BLOCK_SIZE/2, blockY + BLOCK_SIZE*2/3, 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 動物ごとの特別な特徴を描画
+                    switch(animalIndex) {
+                        case 0: // I型
+                            // I型の特徴を描画
+                            break;
+                        case 1: // O型
+                            // O型の特徴を描画
+                            break;
+                        case 2: // T型
+                            // T型の特徴を描画
+                            break;
+                        case 3: // L型
+                            // L型の特徴を描画
+                            break;
+                        case 4: // J型
+                            // J型の特徴を描画
+                            break;
+                        case 5: // S型
+                            // S型の特徴を描画
+                            break;
+                        case 6: // Z型
+                            // Z型の特徴を描画
+                            break;
+                    }
+
                     // ブロックのハイライト
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
                     ctx.fillRect(
@@ -186,7 +233,6 @@ class Tetromino {
     moveLeft() {
         if (!this.collision(this.x - 1, this.y)) {
             this.x--;
-            playSound(sounds.move);
             return true;
         }
         return false;
@@ -196,7 +242,6 @@ class Tetromino {
     moveRight() {
         if (!this.collision(this.x + 1, this.y)) {
             this.x++;
-            playSound(sounds.move);
             return true;
         }
         return false;
@@ -220,7 +265,6 @@ class Tetromino {
 
         if (!this.collision(this.x, this.y, rotated)) {
             this.shape = rotated;
-            playSound(sounds.rotate);
             return true;
         }
         return false;
@@ -244,7 +288,7 @@ class Tetromino {
             dropped = true;
         }
         if (dropped) {
-            playSound(sounds.drop);
+            this.lock();
         }
     }
 }
@@ -257,6 +301,23 @@ let score = 0;
 let dropCounter = 0;
 let dropInterval = 1000; // ミリ秒
 let lastTime = 0;
+let level = 1; // レベルを追加
+
+// レベルに応じた落下速度を計算する関数
+function calculateDropInterval() {
+    // レベルが上がるごとに落下速度が速くなる
+    // レベル1: 1000ms, レベル2: 800ms, レベル3: 600ms, ...
+    return Math.max(100, 1000 - (level - 1) * 200);
+}
+
+// スコアに応じてレベルを更新する関数
+function updateLevel() {
+    const newLevel = Math.floor(score / 1000) + 1;
+    if (newLevel > level) {
+        level = newLevel;
+        dropInterval = calculateDropInterval();
+    }
+}
 
 // 新しいテトリミノの生成
 function createNewPiece() {
@@ -270,6 +331,10 @@ function init() {
     currentPiece = createNewPiece();
     nextPiece = createNewPiece();
     drawNextPiece();
+    score = 0;
+    level = 1;
+    dropInterval = calculateDropInterval();
+    document.getElementById('score').textContent = score;
 }
 
 // ゲームボードの描画
@@ -318,7 +383,9 @@ function checkLines() {
             removeLines(linesToClear);
         }
 
-        score += linesCleared * 100;
+        // スコア計算（消したライン数に応じて）
+        score += linesCleared * 100 * level;
+        updateLevel();
         const scoreElement = document.getElementById('score');
         scoreElement.textContent = score;
         if (settings.animation) {
@@ -449,6 +516,52 @@ document.addEventListener('keydown', (e) => {
         currentPiece.hardDrop();
     }
 });
+
+// ハンバーガーメニューの制御
+const menuButton = document.getElementById('menu-button');
+const menuPanel = document.getElementById('menu-panel');
+
+menuButton.addEventListener('click', () => {
+    menuButton.classList.toggle('active');
+    menuPanel.classList.toggle('active');
+});
+
+// メニュー外クリックで閉じる
+document.addEventListener('click', (e) => {
+    if (!menuPanel.contains(e.target) && !menuButton.contains(e.target)) {
+        menuButton.classList.remove('active');
+        menuPanel.classList.remove('active');
+    }
+});
+
+// タッチイベントの処理
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+});
+
+document.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].clientX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const swipeDistance = touchEndX - touchStartX;
+    
+    // 右スワイプでメニューを開く
+    if (swipeDistance > 50 && !menuPanel.classList.contains('active')) {
+        menuButton.classList.add('active');
+        menuPanel.classList.add('active');
+    }
+    
+    // 左スワイプでメニューを閉じる
+    if (swipeDistance < -50 && menuPanel.classList.contains('active')) {
+        menuButton.classList.remove('active');
+        menuPanel.classList.remove('active');
+    }
+}
 
 // ゲーム開始
 init();

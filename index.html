@@ -2,35 +2,51 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>シンプルテトリス</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="game-container">
-      <div class="game-info">
-        <div class="score">スコア: <span id="score">0</span></div>
-        <div class="next-piece">
-          <h3>次のブロック</h3>
-          <canvas id="next-piece"></canvas>
-        </div>
-        <div class="settings">
-          <div class="setting-item">
-            <label class="switch">
-              <input type="checkbox" id="sound-switch" checked />
-              <span class="slider"></span>
-            </label>
-            <span class="setting-label">サウンド</span>
+      <!-- ハンバーガーメニューボタン -->
+      <button id="menu-button" class="menu-button">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- メニューパネル -->
+      <div id="menu-panel" class="menu-panel">
+        <div class="menu-content">
+          <div class="score">スコア: <span id="score">0</span></div>
+          <div class="next-piece">
+            <h3>次のブロック</h3>
+            <canvas id="next-piece"></canvas>
           </div>
-          <div class="setting-item">
-            <label class="switch">
-              <input type="checkbox" id="animation-switch" checked />
-              <span class="slider"></span>
-            </label>
-            <span class="setting-label">アニメーション</span>
+          <div class="settings">
+            <div class="setting-item">
+              <label class="switch">
+                <input type="checkbox" id="sound-switch" checked />
+                <span class="slider"></span>
+              </label>
+              <span class="setting-label">サウンド</span>
+            </div>
+            <div class="setting-item">
+              <label class="switch">
+                <input type="checkbox" id="animation-switch" checked />
+                <span class="slider"></span>
+              </label>
+              <span class="setting-label">アニメーション</span>
+            </div>
           </div>
         </div>
       </div>
+
       <div class="game-board">
         <canvas id="board"></canvas>
         <div id="game-over" class="game-over" style="display: none">

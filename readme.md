@@ -4,6 +4,9 @@
 
 シンプルで遊びやすいテトリスゲームです。Vanilla JavaScript を使用して開発します。
 
+デプロイ：
+https://masvc.github.io/Tetris/
+
 ## 主な機能
 
 - 基本的なテトリスのゲームプレイ
