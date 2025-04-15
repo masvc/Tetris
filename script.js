@@ -55,6 +55,10 @@ const ANIMAL_SHAPES = [
     [
         [1, 1, 0],
         [0, 1, 1]
+    ],
+    // 爆弾ブロック
+    [
+        [2]
     ]
 ];
 
@@ -66,7 +70,8 @@ const ANIMAL_COLORS = [
     '#FFA500', // L型 - オレンジ
     '#0000FF', // J型 - ブルー
     '#00FF00', // S型 - グリーン
-    '#FF0000'  // Z型 - レッド
+    '#FF0000', // Z型 - レッド
+    '#FF00FF'  // 爆弾ブロック - マゼンタ
 ];
 
 // サウンドエフェクト
@@ -88,6 +93,8 @@ let settings = {
 function initSettings() {
     const soundSwitch = document.getElementById('sound-switch');
     const animationSwitch = document.getElementById('animation-switch');
+    const mobileSoundSwitch = document.getElementById('mobile-sound-switch');
+    const mobileAnimationSwitch = document.getElementById('mobile-animation-switch');
 
     // ローカルストレージから設定を読み込む
     const savedSettings = localStorage.getItem('tetrisSettings');
@@ -95,16 +102,33 @@ function initSettings() {
         settings = JSON.parse(savedSettings);
         soundSwitch.checked = settings.sound;
         animationSwitch.checked = settings.animation;
+        mobileSoundSwitch.checked = settings.sound;
+        mobileAnimationSwitch.checked = settings.animation;
     }
 
-    // イベントリスナーの設定
+    // PC版の設定変更イベント
     soundSwitch.addEventListener('change', (e) => {
         settings.sound = e.target.checked;
+        mobileSoundSwitch.checked = e.target.checked;
         localStorage.setItem('tetrisSettings', JSON.stringify(settings));
     });
 
     animationSwitch.addEventListener('change', (e) => {
         settings.animation = e.target.checked;
+        mobileAnimationSwitch.checked = e.target.checked;
+        localStorage.setItem('tetrisSettings', JSON.stringify(settings));
+    });
+
+    // スマホ版の設定変更イベント
+    mobileSoundSwitch.addEventListener('change', (e) => {
+        settings.sound = e.target.checked;
+        soundSwitch.checked = e.target.checked;
+        localStorage.setItem('tetrisSettings', JSON.stringify(settings));
+    });
+
+    mobileAnimationSwitch.addEventListener('change', (e) => {
+        settings.animation = e.target.checked;
+        animationSwitch.checked = e.target.checked;
         localStorage.setItem('tetrisSettings', JSON.stringify(settings));
     });
 }
@@ -134,73 +158,110 @@ class Tetromino {
                     const blockX = (this.x + x) * BLOCK_SIZE;
                     const blockY = (this.y + y) * BLOCK_SIZE;
                     
-                    // ブロックの描画
-                    ctx.fillRect(
-                        blockX,
-                        blockY,
-                        BLOCK_SIZE - 1,
-                        BLOCK_SIZE - 1
-                    );
+                    if (value === 2) { // 爆弾ブロックの場合
+                        // 爆弾ブロックの特別な描画
+                        ctx.fillStyle = '#FF00FF';
+                        ctx.fillRect(
+                            blockX,
+                            blockY,
+                            BLOCK_SIZE - 1,
+                            BLOCK_SIZE - 1
+                        );
+                        
+                        // 爆弾の本体を描画
+                        ctx.fillStyle = 'black';
+                        ctx.beginPath();
+                        ctx.arc(blockX + BLOCK_SIZE/2, blockY + BLOCK_SIZE/2, BLOCK_SIZE/3, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // 爆弾の上部を描画
+                        ctx.fillStyle = '#FF0000';
+                        ctx.beginPath();
+                        ctx.arc(blockX + BLOCK_SIZE/2, blockY + BLOCK_SIZE/3, BLOCK_SIZE/4, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // 導火線を描画
+                        ctx.strokeStyle = '#FFA500';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(blockX + BLOCK_SIZE/2, blockY + BLOCK_SIZE/3);
+                        ctx.lineTo(blockX + BLOCK_SIZE/2, blockY);
+                        ctx.stroke();
+                        
+                        // 導火線の先端の炎を描画
+                        ctx.fillStyle = '#FF4500';
+                        ctx.beginPath();
+                        ctx.arc(blockX + BLOCK_SIZE/2, blockY, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {
+                        // ブロックの描画
+                        ctx.fillRect(
+                            blockX,
+                            blockY,
+                            BLOCK_SIZE - 1,
+                            BLOCK_SIZE - 1
+                        );
 
-                    // 動物の特徴を描画
-                    const animalIndex = ANIMAL_SHAPES.findIndex(shape => 
-                        JSON.stringify(shape) === JSON.stringify(this.shape)
-                    );
+                        // 動物の特徴を描画
+                        const animalIndex = ANIMAL_SHAPES.findIndex(shape => 
+                            JSON.stringify(shape) === JSON.stringify(this.shape)
+                        );
 
-                    // 目を描画
-                    ctx.fillStyle = 'white';
-                    ctx.beginPath();
-                    ctx.arc(blockX + BLOCK_SIZE/3, blockY + BLOCK_SIZE/3, 3, 0, Math.PI * 2);
-                    ctx.arc(blockX + BLOCK_SIZE*2/3, blockY + BLOCK_SIZE/3, 3, 0, Math.PI * 2);
-                    ctx.fill();
+                        // 目を描画
+                        ctx.fillStyle = 'white';
+                        ctx.beginPath();
+                        ctx.arc(blockX + BLOCK_SIZE/3, blockY + BLOCK_SIZE/3, 3, 0, Math.PI * 2);
+                        ctx.arc(blockX + BLOCK_SIZE*2/3, blockY + BLOCK_SIZE/3, 3, 0, Math.PI * 2);
+                        ctx.fill();
 
-                    // 瞳を描画
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath();
-                    ctx.arc(blockX + BLOCK_SIZE/3, blockY + BLOCK_SIZE/3, 1.5, 0, Math.PI * 2);
-                    ctx.arc(blockX + BLOCK_SIZE*2/3, blockY + BLOCK_SIZE/3, 1.5, 0, Math.PI * 2);
-                    ctx.fill();
+                        // 瞳を描画
+                        ctx.fillStyle = 'black';
+                        ctx.beginPath();
+                        ctx.arc(blockX + BLOCK_SIZE/3, blockY + BLOCK_SIZE/3, 1.5, 0, Math.PI * 2);
+                        ctx.arc(blockX + BLOCK_SIZE*2/3, blockY + BLOCK_SIZE/3, 1.5, 0, Math.PI * 2);
+                        ctx.fill();
 
-                    // 鼻と口を描画
-                    ctx.fillStyle = 'black';
-                    ctx.beginPath();
-                    ctx.arc(blockX + BLOCK_SIZE/2, blockY + BLOCK_SIZE*2/3, 2, 0, Math.PI * 2);
-                    ctx.fill();
+                        // 鼻と口を描画
+                        ctx.fillStyle = 'black';
+                        ctx.beginPath();
+                        ctx.arc(blockX + BLOCK_SIZE/2, blockY + BLOCK_SIZE*2/3, 2, 0, Math.PI * 2);
+                        ctx.fill();
 
-                    // 動物ごとの特別な特徴を描画
-                    switch(animalIndex) {
-                        case 0: // I型
-                            // I型の特徴を描画
-                            break;
-                        case 1: // O型
-                            // O型の特徴を描画
-                            break;
-                        case 2: // T型
-                            // T型の特徴を描画
-                            break;
-                        case 3: // L型
-                            // L型の特徴を描画
-                            break;
-                        case 4: // J型
-                            // J型の特徴を描画
-                            break;
-                        case 5: // S型
-                            // S型の特徴を描画
-                            break;
-                        case 6: // Z型
-                            // Z型の特徴を描画
-                            break;
+                        // 動物ごとの特別な特徴を描画
+                        switch(animalIndex) {
+                            case 0: // I型
+                                // I型の特徴を描画
+                                break;
+                            case 1: // O型
+                                // O型の特徴を描画
+                                break;
+                            case 2: // T型
+                                // T型の特徴を描画
+                                break;
+                            case 3: // L型
+                                // L型の特徴を描画
+                                break;
+                            case 4: // J型
+                                // J型の特徴を描画
+                                break;
+                            case 5: // S型
+                                // S型の特徴を描画
+                                break;
+                            case 6: // Z型
+                                // Z型の特徴を描画
+                                break;
+                        }
+
+                        // ブロックのハイライト
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                        ctx.fillRect(
+                            blockX + 2,
+                            blockY + 2,
+                            BLOCK_SIZE - 5,
+                            BLOCK_SIZE - 5
+                        );
+                        ctx.fillStyle = this.color;
                     }
-
-                    // ブロックのハイライト
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-                    ctx.fillRect(
-                        blockX + 2,
-                        blockY + 2,
-                        BLOCK_SIZE - 5,
-                        BLOCK_SIZE - 5
-                    );
-                    ctx.fillStyle = this.color;
                 }
             });
         });
@@ -272,6 +333,12 @@ class Tetromino {
 
     // テトリミノをボードに固定
     lock() {
+        if (this.applyBombEffect()) {
+            // 爆弾効果が適用された場合は特別な処理
+            drawBoard();
+            return;
+        }
+        
         this.shape.forEach((row, y) => {
             row.forEach((value, x) => {
                 if (value) {
@@ -279,6 +346,64 @@ class Tetromino {
                 }
             });
         });
+        
+        // 次のピースを作成
+        currentPiece = nextPiece;
+        nextPiece = createNewPiece();
+        
+        // ライン消去チェック
+        checkLines();
+        
+        // ゲームオーバーチェック
+        if (isGameOver()) {
+            showGameOver();
+            return;
+        }
+        
+        drawBoard();
+        drawNextPiece();
+    }
+
+    // 爆弾効果を適用
+    applyBombEffect() {
+        if (this.shape[0][0] === 2) { // 爆弾ブロックの場合
+            const x = this.x;
+            const y = this.y;
+            
+            // 爆発エフェクトの描画
+            ctx.fillStyle = '#FF00FF';
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const radius = BLOCK_SIZE * 1.5;
+                const particleX = (x + 0.5) * BLOCK_SIZE + Math.cos(angle) * radius;
+                const particleY = (y + 0.5) * BLOCK_SIZE + Math.sin(angle) * radius;
+                
+                ctx.beginPath();
+                ctx.arc(particleX, particleY, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // 周囲のブロックを消す
+            for (let dy = -1; dy <= 1; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    const newX = x + dx;
+                    const newY = y + dy;
+                    
+                    // ボードの範囲内かチェック
+                    if (newX >= 0 && newX < COLS && newY >= 0 && newY < ROWS) {
+                        board[newY][newX] = 0;
+                    }
+                }
+            }
+            
+            // 爆発エフェクトのアニメーション
+            setTimeout(() => {
+                drawBoard();
+            }, 300);
+            
+            return true;
+        }
+        return false;
     }
 
     // ハードドロップ
@@ -328,6 +453,7 @@ function createNewPiece() {
 // ゲームの初期化
 function init() {
     initSettings();
+    initTouchControls();
     currentPiece = createNewPiece();
     nextPiece = createNewPiece();
     drawNextPiece();
@@ -335,6 +461,7 @@ function init() {
     level = 1;
     dropInterval = calculateDropInterval();
     document.getElementById('score').textContent = score;
+    document.getElementById('mobile-score').textContent = score;
 }
 
 // ゲームボードの描画
@@ -411,16 +538,44 @@ function isGameOver() {
 
 // ネクストブロックの表示
 function drawNextPiece() {
+    const nextPieceCanvas = document.getElementById('next-piece');
+    const mobileNextPieceCanvas = document.getElementById('mobile-next-piece');
+    const nextCtx = nextPieceCanvas.getContext('2d');
+    const mobileNextCtx = mobileNextPieceCanvas.getContext('2d');
+
+    // キャンバスのサイズ設定
+    nextPieceCanvas.width = 4 * BLOCK_SIZE;
+    nextPieceCanvas.height = 4 * BLOCK_SIZE;
+    mobileNextPieceCanvas.width = 4 * BLOCK_SIZE;
+    mobileNextPieceCanvas.height = 4 * BLOCK_SIZE;
+
     // 背景をクリア
     nextCtx.fillStyle = '#f8f8f8';
     nextCtx.fillRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+    mobileNextCtx.fillStyle = '#f8f8f8';
+    mobileNextCtx.fillRect(0, 0, mobileNextPieceCanvas.width, mobileNextPieceCanvas.height);
     
-    // ネクストブロックを描画
+    // ネクストブロックを描画（PC版）
     nextCtx.fillStyle = nextPiece.color;
     nextPiece.shape.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value) {
                 nextCtx.fillRect(
+                    x * BLOCK_SIZE,
+                    y * BLOCK_SIZE,
+                    BLOCK_SIZE - 1,
+                    BLOCK_SIZE - 1
+                );
+            }
+        });
+    });
+
+    // ネクストブロックを描画（スマホ版）
+    mobileNextCtx.fillStyle = nextPiece.color;
+    nextPiece.shape.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value) {
+                mobileNextCtx.fillRect(
                     x * BLOCK_SIZE,
                     y * BLOCK_SIZE,
                     BLOCK_SIZE - 1,
@@ -560,6 +715,66 @@ function handleSwipe() {
     if (swipeDistance < -50 && menuPanel.classList.contains('active')) {
         menuButton.classList.remove('active');
         menuPanel.classList.remove('active');
+    }
+}
+
+// タッチ操作の処理
+function initTouchControls() {
+    const touchAreas = document.querySelectorAll('.touch-area');
+    let touchStartTime = 0;
+    let touchHoldInterval = null;
+
+    touchAreas.forEach(area => {
+        // タッチ開始時の処理
+        area.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchStartTime = Date.now();
+            const action = area.dataset.action;
+
+            // 下方向の場合は長押しで高速落下
+            if (action === 'down') {
+                performAction(action);
+                touchHoldInterval = setInterval(() => {
+                    performAction(action);
+                }, 50);
+            } else {
+                performAction(action);
+            }
+        });
+
+        // タッチ終了時の処理
+        area.addEventListener('touchend', () => {
+            if (touchHoldInterval) {
+                clearInterval(touchHoldInterval);
+                touchHoldInterval = null;
+            }
+        });
+
+        // タッチがキャンセルされた時の処理
+        area.addEventListener('touchcancel', () => {
+            if (touchHoldInterval) {
+                clearInterval(touchHoldInterval);
+                touchHoldInterval = null;
+            }
+        });
+    });
+}
+
+// アクションの実行
+function performAction(action) {
+    switch (action) {
+        case 'rotate':
+            currentPiece.rotate();
+            break;
+        case 'left':
+            currentPiece.moveLeft();
+            break;
+        case 'right':
+            currentPiece.moveRight();
+            break;
+        case 'down':
+            currentPiece.moveDown();
+            break;
     }
 }
 

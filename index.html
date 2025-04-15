@@ -13,32 +13,58 @@
   </head>
   <body>
     <div class="game-container">
-      <!-- ハンバーガーメニューボタン -->
+      <!-- PC版のレイアウト -->
+      <div class="game-info">
+        <div class="score">スコア: <span id="score">0</span></div>
+        <div class="next-piece">
+          <h3>次のブロック</h3>
+          <canvas id="next-piece"></canvas>
+        </div>
+        <div class="settings">
+          <div class="setting-item">
+            <label class="switch">
+              <input type="checkbox" id="sound-switch" checked />
+              <span class="slider"></span>
+            </label>
+            <span class="setting-label">サウンド</span>
+          </div>
+          <div class="setting-item">
+            <label class="switch">
+              <input type="checkbox" id="animation-switch" checked />
+              <span class="slider"></span>
+            </label>
+            <span class="setting-label">アニメーション</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- スマホ版のハンバーガーメニュー -->
       <button id="menu-button" class="menu-button">
         <span></span>
         <span></span>
         <span></span>
       </button>
 
-      <!-- メニューパネル -->
       <div id="menu-panel" class="menu-panel">
         <div class="menu-content">
-          <div class="score">スコア: <span id="score">0</span></div>
-          <div class="next-piece">
-            <h3>次のブロック</h3>
-            <canvas id="next-piece"></canvas>
+          <div class="mobile-score">
+            スコア: <span id="mobile-score">0</span>
           </div>
-          <div class="settings">
+          <div class="mobile-next-piece">
+            <h3>次のブロック</h3>
+            <canvas id="mobile-next-piece"></canvas>
+          </div>
+          <div class="mobile-settings">
             <div class="setting-item">
               <label class="switch">
-                <input type="checkbox" id="sound-switch" checked />
+                <input type="checkbox" id="mobile-sound-switch" checked />
                 <span class="slider"></span>
               </label>
               <span class="setting-label">サウンド</span>
             </div>
             <div class="setting-item">
               <label class="switch">
-                <input type="checkbox" id="animation-switch" checked />
+                <input type="checkbox" id="mobile-animation-switch" checked />
                 <span class="slider"></span>
               </label>
               <span class="setting-label">アニメーション</span>
@@ -53,6 +79,21 @@
           <div>ゲームオーバー！</div>
           <div>スコア: <span id="final-score">0</span></div>
           <button id="restart-button">もう一度プレイ</button>
+        </div>
+        <!-- タッチコントロールエリア -->
+        <div class="touch-controls">
+          <div class="touch-area touch-up" data-action="rotate">
+            <div class="touch-hint">回転</div>
+          </div>
+          <div class="touch-area touch-left" data-action="left">
+            <div class="touch-hint">←</div>
+          </div>
+          <div class="touch-area touch-right" data-action="right">
+            <div class="touch-hint">→</div>
+          </div>
+          <div class="touch-area touch-down" data-action="down">
+            <div class="touch-hint">↓</div>
+          </div>
         </div>
       </div>
     </div>
