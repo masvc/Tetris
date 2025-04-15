@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>シンプルテトリス</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="game-info">
+        <div class="score">スコア: <span id="score">0</span></div>
+        <div class="next-piece">
+          <h3>次のブロック</h3>
+          <canvas id="next-piece"></canvas>
+        </div>
+        <div class="settings">
+          <div class="setting-item">
+            <label class="switch">
+              <input type="checkbox" id="sound-switch" checked />
+              <span class="slider"></span>
+            </label>
+            <span class="setting-label">サウンド</span>
+          </div>
+          <div class="setting-item">
+            <label class="switch">
+              <input type="checkbox" id="animation-switch" checked />
+              <span class="slider"></span>
+            </label>
+            <span class="setting-label">アニメーション</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-board">
+        <canvas id="board"></canvas>
+        <div id="game-over" class="game-over" style="display: none">
+          <div>ゲームオーバー！</div>
+          <div>スコア: <span id="final-score">0</span></div>
+          <button id="restart-button">もう一度プレイ</button>
+        </div>
+      </div>
+    </div>
+    <!-- 音声ファイル -->
+    <audio
+      id="moveSound"
+      src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"
+    ></audio>
+    <audio
+      id="rotateSound"
+      src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"
+    ></audio>
+    <audio
+      id="dropSound"
+      src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"
+    ></audio>
+    <audio
+      id="clearSound"
+      src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3"
+    ></audio>
+    <audio
+      id="gameOverSound"
+      src="https://assets.mixkit.co/active_storage/sfx/2574/2574-preview.mp3"
+    ></audio>
+    <script src="script.js"></script>
+  </body>
+</html>

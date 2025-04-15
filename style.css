@@ -1,0 +1,251 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --background-color: #ecf0f1;
+    --text-color: #2c3e50;
+    --border-radius: 10px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+}
+
+.game-container {
+    display: flex;
+    gap: 30px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    min-width: 200px;
+}
+
+.score {
+    background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+    color: white;
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.next-piece {
+    background-color: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.next-piece h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: var(--primary-color);
+    text-align: center;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+}
+
+#next-piece {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.game-board {
+    position: relative;
+}
+
+#board {
+    border: 3px solid var(--primary-color);
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* アニメーション効果 */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes drop {
+    0% { transform: translateY(-100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes clearLine {
+    0% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(0.1); opacity: 0.5; }
+    100% { transform: scaleY(0); opacity: 0; }
+}
+
+@keyframes gameOverFade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.score.pulse {
+    animation: pulse 0.3s ease-in-out;
+}
+
+.block-drop {
+    animation: drop 0.2s ease-out;
+}
+
+.line-clear {
+    animation: clearLine 0.3s ease-out;
+}
+
+.game-over {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(231, 76, 60, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2em;
+    font-weight: bold;
+    border-radius: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: gameOverFade 0.5s ease-out;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.game-over button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: white;
+    color: var(--accent-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.game-over button:hover {
+    transform: scale(1.05);
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .game-info {
+        flex-direction: row;
+        justify-content: space-between;
+        min-width: auto;
+    }
+
+    .next-piece {
+        width: 120px;
+    }
+}
+
+.settings {
+    background-color: white;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-top: 20px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.setting-item:last-child {
+    margin-bottom: 0;
+}
+
+.setting-label {
+    margin-left: 10px;
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+/* スイッチのスタイル */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--secondary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--secondary-color);
+} 
